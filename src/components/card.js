@@ -16,21 +16,20 @@ function createCard(
 
   cardImage.src = cardInfo.link;
   cardImage.alt = cardInfo.name;
-  cardImage.addEventListener("click", showFunction);
-  cardDeleteButton.addEventListener("click", removeFunction);
-  cardLikeButton.addEventListener("click", likeFunction);
+  cardImage.addEventListener("click", () => showFunction(cardInfo));
+  cardDeleteButton.addEventListener("click", () => removeFunction(cardElement));
+  cardLikeButton.addEventListener("click", () => likeFunction(cardLikeButton));
   cardTitle.textContent = cardInfo.name;
 
   return cardElement;
 }
 
-function likeCard(event) {
-  event.target.classList.toggle("card__like-button_is-active");
+function likeCard(cardLikeButton) {
+  cardLikeButton.classList.toggle("card__like-button_is-active");
 }
 
-function removeCard(event) {
-  const listItem = event.target.closest(".places__item");
-  listItem.remove();
+function removeCard(cardElement) {
+  cardElement.remove();
 }
 
 export { createCard, likeCard, removeCard };

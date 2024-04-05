@@ -1,4 +1,5 @@
 .profile__description {
+  max-width: min-content;
   font-size: 18px;
   line-height: 22px;
   grid-area: description;

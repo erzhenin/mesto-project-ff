@@ -1,7 +1,7 @@
 import "./pages/index.css";
 import { initialCards } from "./components/cards";
 import { createCard, removeCard, likeCard } from "./components/card";
-import { openModal, closeModal } from "./components/modal";
+import { openModal, closeModal, closeModalClick } from "./components/modal";
 
 // Constant variables
 
@@ -11,24 +11,31 @@ const cardsList = document.querySelector(".places__list");
 const popupProfileEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 
+const popupImage = document.querySelector(".popup_type_image");
+const image = popupImage.querySelector(".popup__image");
+const caption = popupImage.querySelector(".popup__caption");
+
+const popupCloseCollection = document.querySelectorAll(".popup, .popup__close");
+
 const buttonProfileEdit = document.querySelector(".profile__edit-button");
 const buttonNewCard = document.querySelector(".profile__add-button");
 
 const profileForm = document.forms["edit-profile"];
+const profileFormName = profileForm.elements["name"];
+const profileFormDesc = profileForm.elements["description"];
+
 const placeForm = document.forms["new-place"];
+const placeFormName = placeForm.elements["place-name"];
+const placeFormLink = placeForm.elements["link"];
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDesc = document.querySelector(".profile__description");
 
 // Functions
 
-function openImageModal(event) {
-  const source = event.target.src;
-  const alternative = event.target.alt;
-
-  const popupImage = document.querySelector(".popup_type_image");
-  const image = popupImage.querySelector(".popup__image");
-  const caption = popupImage.querySelector(".popup__caption");
+function openImageModal(cardInfo) {
+  const source = cardInfo.link;
+  const alternative = cardInfo.name;
 
   image.src = source;
   image.alt = alternative;
@@ -38,36 +45,21 @@ function openImageModal(event) {
   openModal(popupImage);
 }
 
-function handleProfileFormSubmit(
-  event,
-  profileTitle,
-  profileDesc,
-  popupProfileEdit
-) {
+function handleProfileFormSubmit(event) {
   event.preventDefault();
 
-  const form = event.target;
-
-  const name = form.elements["name"].value;
-  const desc = form.elements["description"].value;
-
-  profileTitle.textContent = name;
-  profileDesc.textContent = desc;
+  profileTitle.textContent = profileFormName.value;
+  profileDesc.textContent = profileFormDesc.value;
 
   closeModal(popupProfileEdit);
 }
 
-function handlePlaceFormSubmit(event, cardsList, popupNewCard) {
+function handlePlaceFormSubmit(event) {
   event.preventDefault();
 
-  const form = event.target;
-
-  const name = form.elements["place-name"].value;
-  const link = form.elements["link"].value;
-
   const card = {
-    name,
-    link,
+    name: placeFormName.value,
+    link: placeFormLink.value,
   };
 
   const newCard = createCard(
@@ -78,9 +70,9 @@ function handlePlaceFormSubmit(event, cardsList, popupNewCard) {
     likeCard
   );
 
-  cardsList.prepend(newCard);
+  placeForm.reset();
 
-  form.reset();
+  cardsList.prepend(newCard);
 
   closeModal(popupNewCard);
 }
@@ -88,8 +80,8 @@ function handlePlaceFormSubmit(event, cardsList, popupNewCard) {
 // Handlers
 
 buttonProfileEdit.addEventListener("click", () => {
-  profileForm.elements["name"].value = profileTitle.textContent;
-  profileForm.elements["description"].value = profileDesc.textContent;
+  profileFormName.value = profileTitle.textContent;
+  profileFormDesc.value = profileDesc.textContent;
 
   openModal(popupProfileEdit);
 });
@@ -99,11 +91,15 @@ buttonNewCard.addEventListener("click", () => {
 });
 
 profileForm.addEventListener("submit", (event) => {
-  handleProfileFormSubmit(event, profileTitle, profileDesc, popupProfileEdit);
+  handleProfileFormSubmit(event);
 });
 
 placeForm.addEventListener("submit", (event) => {
-  handlePlaceFormSubmit(event, cardsList, popupNewCard);
+  handlePlaceFormSubmit(event);
+});
+
+popupCloseCollection.forEach((popup) => {
+  popup.addEventListener("click", closeModalClick);
 });
 
 // Creating initial cards
