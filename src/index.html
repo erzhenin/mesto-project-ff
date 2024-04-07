@@ -23,7 +23,9 @@
           <div
             class="profile__image"
             style="background-image: url(<%=require('./images/avatar.jpg')%>)"
-          ></div>
+          >
+            <button class="profile__avatar-button" type="button"></button>
+          </div>
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
             <button class="profile__edit-button" type="button"></button>
@@ -78,7 +80,6 @@
               name="button"
               data-text="Сохранить"
               data-loading="Сохранение..."
-              data-error="Не удалось сохранить!"
               class="button popup__button"
             >
               Сохранить
@@ -123,7 +124,35 @@
               name="button"
               data-text="Сохранить"
               data-loading="Сохранение..."
-              data-error="Не удалось сохранить!"
+              class="button popup__button"
+            >
+              Сохранить
+            </button>
+            <span class="popup__error"></span>
+          </form>
+        </div>
+      </div>
+      <div class="popup popup_type_change-avatar popup_is-animated">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Обновить аватар</h3>
+          <form class="popup__form" name="change-avatar">
+            <label class="popup__form-field">
+              <input
+                id="avatar-input"
+                type="url"
+                name="avatar"
+                class="popup__input popup__input_type_url"
+                placeholder="Ссылка на картинку"
+                required
+              />
+              <span class="popup__input-error avatar-input-error"></span>
+            </label>
+            <button
+              type="submit"
+              name="button"
+              data-text="Сохранить"
+              data-loading="Сохранение..."
               class="button popup__button"
             >
               Сохранить

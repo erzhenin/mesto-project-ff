@@ -120,7 +120,7 @@ const changeLike = (cardId, method) => {
     .catch((err) => {
       return Promise.reject(`Не удалось выполнить запрос: ${err}`);
     });
-}
+};
 
 const addLike = (cardId) => {
   return changeLike(cardId, "PUT");
@@ -150,6 +150,22 @@ const setAvatar = (avatar) => {
     });
 };
 
+const isImage = (link) => {
+  return fetch(link, {})
+    .then((res) => {
+      if (res.ok) {
+        return Promise.resolve(
+          res.headers.get("content-type").includes("image")
+        );
+      }
+
+      return Promise.reject(res.status);
+    })
+    .catch((err) => {
+      return Promise.reject(err);
+    });
+};
+
 export {
   getUserInfo,
   setUserInfo,
@@ -159,4 +175,5 @@ export {
   addLike,
   removeLike,
   setAvatar,
+  isImage,
 };

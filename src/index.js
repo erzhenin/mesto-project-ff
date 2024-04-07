@@ -6,6 +6,8 @@ import {
   addCard,
   getInitialCards,
   getUserInfo,
+  isImage,
+  setAvatar,
   setUserInfo,
 } from "./components/api";
 
@@ -25,6 +27,7 @@ const cardsList = document.querySelector(".places__list");
 
 const popupProfileEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupAvatar = document.querySelector(".popup_type_change-avatar");
 
 const popupImage = document.querySelector(".popup_type_image");
 const image = popupImage.querySelector(".popup__image");
@@ -34,6 +37,7 @@ const popupCloseCollection = document.querySelectorAll(".popup, .popup__close");
 
 const buttonProfileEdit = document.querySelector(".profile__edit-button");
 const buttonNewCard = document.querySelector(".profile__add-button");
+const buttonChangeAvatar = document.querySelector(".profile__avatar-button");
 
 const profileForm = document.forms["edit-profile"];
 const profileFormName = profileForm.elements["name"];
@@ -46,6 +50,11 @@ const placeFormName = placeForm.elements["place-name"];
 const placeFormLink = placeForm.elements["link"];
 const placeFormButton = placeForm.elements["button"];
 const placeFromError = popupNewCard.querySelector(".popup__error");
+
+const avatarForm = document.forms["change-avatar"];
+const avatarFormLink = avatarForm.elements["avatar"];
+const avatarFormButton = avatarForm.elements["button"];
+const avatarFormError = popupAvatar.querySelector(".popup__error");
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDesc = document.querySelector(".profile__description");
@@ -85,12 +94,13 @@ const handleProfileFormSubmit = (event) => {
       profileTitle.textContent = data.name;
       profileDesc.textContent = data.about;
 
-      profileFormButton.textContent = profileFormButton.dataset.text;
       closeModal(popupProfileEdit);
     })
     .catch((err) => {
       showError(profileFormError, err);
-      profileFormButton.textContent = profileFormButton.dataset.error;
+    })
+    .finally(() => {
+      profileFormButton.textContent = profileFormButton.dataset.text;
     });
 };
 
@@ -112,13 +122,44 @@ const handlePlaceFormSubmit = (event) => {
       cardsList.prepend(newCard);
 
       placeForm.reset();
-      placeFormButton.textContent = placeFormButton.dataset.text;
 
       closeModal(popupNewCard);
     })
     .catch((err) => {
       showError(placeFromError, err);
-      placeFormButton.textContent = placeFormButton.dataset.error;
+    })
+    .finally(() => {
+      placeFormButton.textContent = placeFormButton.dataset.text;
+    });
+};
+
+const handleAvatarFormSubmit = (event) => {
+  event.preventDefault();
+
+  avatarFormButton.textContent = avatarFormButton.dataset.loading;
+
+  isImage(avatarFormLink.value)
+    .then((result) => {
+      if (result) {
+        setAvatar(avatarFormLink.value)
+          .then((data) => {
+            profileAvatar.style.backgroundImage = `url(${data.avatar})`;
+            avatarForm.reset();
+
+            closeModal(popupAvatar);
+          })
+          .catch((err) => {
+            showError(avatarFormError, err);
+          });
+      } else {
+        showError(avatarFormError, "Ссылка не является изображением!");
+      }
+    })
+    .catch((error) => {
+      showError(avatarFormError, error);
+    })
+    .finally(() => {
+      avatarFormButton.textContent = avatarFormButton.dataset.text;
     });
 };
 
@@ -145,13 +186,21 @@ buttonNewCard.addEventListener("click", () => {
   openModal(popupNewCard);
 });
 
-profileForm.addEventListener("submit", (event) => {
-  handleProfileFormSubmit(event);
+buttonChangeAvatar.addEventListener("click", () => {
+  avatarForm.reset();
+
+  hideError(avatarFormError);
+
+  clearValidation(avatarForm, validationConfig);
+
+  openModal(popupAvatar);
 });
 
-placeForm.addEventListener("submit", (event) => {
-  handlePlaceFormSubmit(event);
-});
+profileForm.addEventListener("submit", handleProfileFormSubmit);
+
+placeForm.addEventListener("submit", handlePlaceFormSubmit);
+
+avatarForm.addEventListener("submit", handleAvatarFormSubmit);
 
 popupCloseCollection.forEach((popup) => {
   popup.addEventListener("click", closeModalClick);
