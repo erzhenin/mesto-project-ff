@@ -13,13 +13,16 @@ function createCard(
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
   const cardTitle = cardElement.querySelector(".card__title");
   const cardLikeButton = cardElement.querySelector(".card__like-button");
+  const cardLikeCounter = cardElement.querySelector(".card__like-counter");
 
   cardImage.src = cardInfo.link;
   cardImage.alt = cardInfo.name;
+  cardTitle.textContent = cardInfo.name;
+  cardLikeCounter.textContent = cardInfo.likes.length;
+
   cardImage.addEventListener("click", () => showFunction(cardInfo));
   cardDeleteButton.addEventListener("click", () => removeFunction(cardElement));
   cardLikeButton.addEventListener("click", () => likeFunction(cardLikeButton));
-  cardTitle.textContent = cardInfo.name;
 
   return cardElement;
 }
