@@ -45,22 +45,34 @@ function createCard(
 
 function likeCard(cardLikeButton, cardLikeCounter, cardInfo) {
   if (cardLikeButton.classList.contains("card__like-button_is-active")) {
-    removeLike(cardInfo._id).then((data) => {
-      cardLikeCounter.textContent = data.likes.length;
-      cardLikeButton.classList.remove("card__like-button_is-active");
-    });
+    removeLike(cardInfo._id)
+      .then((data) => {
+        cardLikeCounter.textContent = data.likes.length;
+        cardLikeButton.classList.remove("card__like-button_is-active");
+      })
+      .catch((err) => {
+        console.log(`Ошибка: ${err}`);
+      });
   } else {
-    addLike(cardInfo._id).then((data) => {
-      cardLikeCounter.textContent = data.likes.length;
-      cardLikeButton.classList.add("card__like-button_is-active");
-    });
+    addLike(cardInfo._id)
+      .then((data) => {
+        cardLikeCounter.textContent = data.likes.length;
+        cardLikeButton.classList.add("card__like-button_is-active");
+      })
+      .catch((err) => {
+        console.log(`Ошибка: ${err}`);
+      });
   }
 }
 
 function removeCard(cardElement, cardInfo) {
-  deleteCard(cardInfo._id).then(() => {
-    cardElement.remove();
-  });
+  deleteCard(cardInfo._id)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((err) => {
+      console.log(`Ошибка: ${err}`);
+    });
 }
 
 export { createCard, likeCard, removeCard };

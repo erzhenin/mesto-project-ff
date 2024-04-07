@@ -97,7 +97,7 @@ const handleProfileFormSubmit = (event) => {
       closeModal(popupProfileEdit);
     })
     .catch((err) => {
-      showError(profileFormError, err);
+      showError(profileFormError, `Ошибка: ${err}`);
     })
     .finally(() => {
       profileFormButton.textContent = profileFormButton.dataset.text;
@@ -126,7 +126,7 @@ const handlePlaceFormSubmit = (event) => {
       closeModal(popupNewCard);
     })
     .catch((err) => {
-      showError(placeFromError, err);
+      showError(placeFromError, `Ошибка: ${err}`);
     })
     .finally(() => {
       placeFormButton.textContent = placeFormButton.dataset.text;
@@ -149,14 +149,14 @@ const handleAvatarFormSubmit = (event) => {
             closeModal(popupAvatar);
           })
           .catch((err) => {
-            showError(avatarFormError, err);
+            showError(avatarFormError, `Ошибка: ${err}`);
           });
       } else {
         showError(avatarFormError, "Ссылка не является изображением!");
       }
     })
-    .catch((error) => {
-      showError(avatarFormError, error);
+    .catch((err) => {
+      showError(avatarFormError, `Ошибка: ${err}`);
     })
     .finally(() => {
       avatarFormButton.textContent = avatarFormButton.dataset.text;
@@ -243,6 +243,8 @@ Promise.all(promises).then((data) => {
     );
     cardsList.append(newCard);
   });
+}).catch(err => {
+  console.log(`Ошибка: ${err}`);
 });
 
 // Enabling validations on all forms
