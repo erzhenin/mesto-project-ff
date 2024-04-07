@@ -2,8 +2,18 @@ import "./pages/index.css";
 import { initialCards } from "./components/cards";
 import { createCard, removeCard, likeCard } from "./components/card";
 import { openModal, closeModal, closeModalClick } from "./components/modal";
+import { enableValidation, clearValidation } from "./components/validation";
 
 // Constant variables
+
+const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__input-error_active",
+};
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -83,10 +93,16 @@ buttonProfileEdit.addEventListener("click", () => {
   profileFormName.value = profileTitle.textContent;
   profileFormDesc.value = profileDesc.textContent;
 
+  clearValidation(profileForm, validationConfig);
+
   openModal(popupProfileEdit);
 });
 
 buttonNewCard.addEventListener("click", () => {
+  placeForm.reset();
+
+  clearValidation(placeForm, validationConfig);
+
   openModal(popupNewCard);
 });
 
@@ -114,3 +130,7 @@ initialCards.forEach((card) => {
   );
   cardsList.append(newCard);
 });
+
+// Enabling validations on all forms
+
+enableValidation(validationConfig);
