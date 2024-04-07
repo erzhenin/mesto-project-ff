@@ -43,7 +43,7 @@ const profileDesc = document.querySelector(".profile__description");
 
 // Functions
 
-function openImageModal(cardInfo) {
+const openImageModal = (cardInfo) => {
   const source = cardInfo.link;
   const alternative = cardInfo.name;
 
@@ -53,18 +53,18 @@ function openImageModal(cardInfo) {
   caption.textContent = alternative;
 
   openModal(popupImage);
-}
+};
 
-function handleProfileFormSubmit(event) {
+const handleProfileFormSubmit = (event) => {
   event.preventDefault();
 
   profileTitle.textContent = profileFormName.value;
   profileDesc.textContent = profileFormDesc.value;
 
   closeModal(popupProfileEdit);
-}
+};
 
-function handlePlaceFormSubmit(event) {
+const handlePlaceFormSubmit = (event) => {
   event.preventDefault();
 
   const card = {
@@ -85,7 +85,7 @@ function handlePlaceFormSubmit(event) {
   cardsList.prepend(newCard);
 
   closeModal(popupNewCard);
-}
+};
 
 // Handlers
 
