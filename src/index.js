@@ -133,7 +133,7 @@ const handlePlaceFormSubmit = (event) => {
         openDeleteCardModal,
         openImageModal,
         likeCard,
-        false
+        null
       );
       cardsList.prepend(newCard);
 
