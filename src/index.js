@@ -28,6 +28,7 @@ const cardsList = document.querySelector(".places__list");
 const popupProfileEdit = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupAvatar = document.querySelector(".popup_type_change-avatar");
+const popupDeleteCard = document.querySelector(".popup_type_delete-card");
 
 const popupImage = document.querySelector(".popup_type_image");
 const image = popupImage.querySelector(".popup__image");
@@ -56,6 +57,11 @@ const avatarFormLink = avatarForm.elements["avatar"];
 const avatarFormButton = avatarForm.elements["button"];
 const avatarFormError = popupAvatar.querySelector(".popup__error");
 
+const deleteCardForm = document.forms["delete-card"];
+const deleteCardFormId = deleteCardForm.elements["cardid"];
+const deleteCardFormButton = deleteCardForm.elements["button"];
+const deleteCardFormError = popupDeleteCard.querySelector(".popup__error");
+
 const profileTitle = document.querySelector(".profile__title");
 const profileDesc = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
@@ -82,6 +88,16 @@ const openImageModal = (cardInfo) => {
   caption.textContent = alternative;
 
   openModal(popupImage);
+};
+
+const openDeleteCardModal = (cardInfo) => {
+  deleteCardFormId.value = cardInfo._id;
+
+  clearValidation(deleteCardForm, validationConfig);
+
+  deleteCardFormButton.addEventListener("click", handleDeleteFormSubmit);
+
+  openModal(popupDeleteCard);
 };
 
 const handleProfileFormSubmit = (event) => {
@@ -114,7 +130,7 @@ const handlePlaceFormSubmit = (event) => {
       const newCard = createCard(
         cardTemplate,
         cardInfo,
-        removeCard,
+        openDeleteCardModal,
         openImageModal,
         likeCard,
         false
@@ -161,6 +177,34 @@ const handleAvatarFormSubmit = (event) => {
     .finally(() => {
       avatarFormButton.textContent = avatarFormButton.dataset.text;
     });
+};
+
+const handleDeleteFormSubmit = (event) => {
+  event.preventDefault();
+
+  const cardElement = document.querySelector(
+    `[data-id="${deleteCardFormId.value}"]`
+  );
+
+  if (cardElement) {
+    deleteCardFormButton.textContent = deleteCardFormButton.dataset.loading;
+
+    removeCard(cardElement, deleteCardFormId.value)
+      .then((res) => {
+        deleteCardForm.reset();
+        closeModal(popupDeleteCard);
+      })
+      .catch((err) => {
+        showError(deleteCardFormError, `Ошибка: ${err}`);
+      })
+      .finally(() => {
+        deleteCardFormButton.textContent = deleteCardFormButton.dataset.text;
+      });
+  } else {
+    showError(deleteCardFormError, "Ошибка: Указанная карточка не найдена!");
+  }
+
+  event.target.removeEventListener("click", handleDeleteFormSubmit);
 };
 
 // Handlers
@@ -210,42 +254,44 @@ popupCloseCollection.forEach((popup) => {
 
 const promises = [getUserInfo(), getInitialCards()];
 
-Promise.all(promises).then((data) => {
-  profileTitle.textContent = data[0].name;
-  profileDesc.textContent = data[0].about;
-  profileAvatar.style.backgroundImage = `url(${data[0].avatar})`;
+Promise.all(promises)
+  .then((data) => {
+    profileTitle.textContent = data[0].name;
+    profileDesc.textContent = data[0].about;
+    profileAvatar.style.backgroundImage = `url(${data[0].avatar})`;
 
-  const userId = data[0]._id;
+    const userId = data[0]._id;
 
-  data[1].forEach((card) => {
-    let remFunc = null;
-    let liked = false;
+    data[1].forEach((card) => {
+      let remFunc = null;
+      let liked = false;
 
-    if (card.owner._id === userId) {
-      remFunc = removeCard;
-    }
+      if (card.owner._id === userId) {
+        remFunc = openDeleteCardModal;
+      }
 
-    if (
-      card.likes.some((user) => {
-        return user._id === userId;
-      })
-    ) {
-      liked = true;
-    }
+      if (
+        card.likes.some((user) => {
+          return user._id === userId;
+        })
+      ) {
+        liked = true;
+      }
 
-    const newCard = createCard(
-      cardTemplate,
-      card,
-      remFunc,
-      openImageModal,
-      likeCard,
-      liked
-    );
-    cardsList.append(newCard);
+      const newCard = createCard(
+        cardTemplate,
+        card,
+        remFunc,
+        openImageModal,
+        likeCard,
+        liked
+      );
+      cardsList.append(newCard);
+    });
+  })
+  .catch((err) => {
+    console.log(`Ошибка: ${err}`);
   });
-}).catch(err => {
-  console.log(`Ошибка: ${err}`);
-});
 
 // Enabling validations on all forms
 

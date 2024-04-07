@@ -168,8 +168,36 @@
           <p class="popup__caption"></p>
         </div>
       </div>
+      <div class="popup popup_type_delete-card popup_is-animated">
+        <div class="popup__content popup__content_height-limit_removed">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Вы уверены?</h3>
+          <form class="popup__form" name="delete-card">
+            <label class="popup__form-field">
+              <input
+                id="cardid-input"
+                type="text"
+                name="cardid"
+                class="popup__input popup__input_hidden popup__input_type_delete-card"
+                placeholder="Ссылка на картинку"
+                required
+              />
+              <span class="popup__input-error cardid-input-error"></span>
+            </label>
+            <button
+              type="submit"
+              name="button"
+              data-text="Да"
+              data-loading="Удаление..."
+              class="button popup__button popup__button_nomargin"
+            >
+              Да
+            </button>
+            <span class="popup__error"></span>
+          </form>
+        </div>
+      </div>
     </div>
-
     <template id="card-template">
       <li class="places__item card">
         <img class="card__image" src="" alt="" />

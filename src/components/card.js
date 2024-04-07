@@ -1,16 +1,18 @@
 import { addLike, deleteCard, removeLike } from "./api";
 
-function createCard(
+const createCard = (
   cardTemplate,
   cardInfo,
   removeFunction,
   showFunction,
   likeFunction,
   isLiked
-) {
+) => {
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);
+
+  cardElement.dataset.id = cardInfo._id;
 
   const cardImage = cardElement.querySelector(".card__image");
   const cardDeleteButton = cardElement.querySelector(".card__delete-button");
@@ -33,17 +35,17 @@ function createCard(
   );
 
   if (removeFunction) {
-    cardDeleteButton.addEventListener("click", () =>
-      removeFunction(cardElement, cardInfo)
-    );
+    cardDeleteButton.addEventListener("click", () => {
+      removeFunction(cardInfo);
+    });
   } else {
     cardDeleteButton.classList.add("card__delete-button_inactive");
   }
 
   return cardElement;
-}
+};
 
-function likeCard(cardLikeButton, cardLikeCounter, cardInfo) {
+const likeCard = (cardLikeButton, cardLikeCounter, cardInfo) => {
   if (cardLikeButton.classList.contains("card__like-button_is-active")) {
     removeLike(cardInfo._id)
       .then((data) => {
@@ -63,16 +65,16 @@ function likeCard(cardLikeButton, cardLikeCounter, cardInfo) {
         console.log(`Ошибка: ${err}`);
       });
   }
-}
+};
 
-function removeCard(cardElement, cardInfo) {
-  deleteCard(cardInfo._id)
+const removeCard = (cardElement, cardId) => {
+  return deleteCard(cardId)
     .then(() => {
       cardElement.remove();
     })
     .catch((err) => {
       console.log(`Ошибка: ${err}`);
     });
-}
+};
 
 export { createCard, likeCard, removeCard };
