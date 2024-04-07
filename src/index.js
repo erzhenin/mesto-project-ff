@@ -1,8 +1,13 @@
 import "./pages/index.css";
-import { initialCards } from "./components/cards";
 import { createCard, removeCard, likeCard } from "./components/card";
 import { openModal, closeModal, closeModalClick } from "./components/modal";
 import { enableValidation, clearValidation } from "./components/validation";
+import {
+  addCard,
+  getInitialCards,
+  getUserInfo,
+  setUserInfo,
+} from "./components/api";
 
 // Constant variables
 
@@ -33,15 +38,30 @@ const buttonNewCard = document.querySelector(".profile__add-button");
 const profileForm = document.forms["edit-profile"];
 const profileFormName = profileForm.elements["name"];
 const profileFormDesc = profileForm.elements["description"];
+const profileFormButton = profileForm.elements["button"];
+const profileFormError = popupProfileEdit.querySelector(".popup__error");
 
 const placeForm = document.forms["new-place"];
 const placeFormName = placeForm.elements["place-name"];
 const placeFormLink = placeForm.elements["link"];
+const placeFormButton = placeForm.elements["button"];
+const placeFromError = popupNewCard.querySelector(".popup__error");
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDesc = document.querySelector(".profile__description");
+const profileAvatar = document.querySelector(".profile__image");
 
 // Functions
+
+const showError = (errorElement, errorText) => {
+  errorElement.classList.add("popup__error_active");
+  errorElement.textContent = errorText;
+};
+
+const hideError = (errorElement) => {
+  errorElement.classList.remove("popup__error_active");
+  errorElement.textContent = "";
+};
 
 const openImageModal = (cardInfo) => {
   const source = cardInfo.link;
@@ -58,33 +78,47 @@ const openImageModal = (cardInfo) => {
 const handleProfileFormSubmit = (event) => {
   event.preventDefault();
 
-  profileTitle.textContent = profileFormName.value;
-  profileDesc.textContent = profileFormDesc.value;
+  profileFormButton.textContent = profileFormButton.dataset.loading;
 
-  closeModal(popupProfileEdit);
+  setUserInfo(profileFormName.value, profileFormDesc.value)
+    .then((data) => {
+      profileTitle.textContent = data.name;
+      profileDesc.textContent = data.about;
+
+      profileFormButton.textContent = profileFormButton.dataset.text;
+      closeModal(popupProfileEdit);
+    })
+    .catch((err) => {
+      showError(profileFormError, err);
+      profileFormButton.textContent = profileFormButton.dataset.error;
+    });
 };
 
 const handlePlaceFormSubmit = (event) => {
   event.preventDefault();
 
-  const card = {
-    name: placeFormName.value,
-    link: placeFormLink.value,
-  };
+  placeFormButton.textContent = placeFormButton.dataset.loading;
 
-  const newCard = createCard(
-    cardTemplate,
-    card,
-    removeCard,
-    openImageModal,
-    likeCard
-  );
+  addCard(placeFormName.value, placeFormLink.value)
+    .then((cardInfo) => {
+      const newCard = createCard(
+        cardTemplate,
+        cardInfo,
+        removeCard,
+        openImageModal,
+        likeCard
+      );
+      cardsList.prepend(newCard);
 
-  placeForm.reset();
+      placeForm.reset();
+      placeFormButton.textContent = placeFormButton.dataset.text;
 
-  cardsList.prepend(newCard);
-
-  closeModal(popupNewCard);
+      closeModal(popupNewCard);
+    })
+    .catch((err) => {
+      showError(placeFromError, err);
+      placeFormButton.textContent = placeFormButton.dataset.error;
+    });
 };
 
 // Handlers
@@ -93,6 +127,8 @@ buttonProfileEdit.addEventListener("click", () => {
   profileFormName.value = profileTitle.textContent;
   profileFormDesc.value = profileDesc.textContent;
 
+  hideError(profileFormError);
+
   clearValidation(profileForm, validationConfig);
 
   openModal(popupProfileEdit);
@@ -100,6 +136,8 @@ buttonProfileEdit.addEventListener("click", () => {
 
 buttonNewCard.addEventListener("click", () => {
   placeForm.reset();
+
+  hideError(placeFromError);
 
   clearValidation(placeForm, validationConfig);
 
@@ -118,17 +156,25 @@ popupCloseCollection.forEach((popup) => {
   popup.addEventListener("click", closeModalClick);
 });
 
-// Creating initial cards
+// Retrieving initial information
 
-initialCards.forEach((card) => {
-  const newCard = createCard(
-    cardTemplate,
-    card,
-    removeCard,
-    openImageModal,
-    likeCard
-  );
-  cardsList.append(newCard);
+getUserInfo().then((data) => {
+  profileTitle.textContent = data.name;
+  profileDesc.textContent = data.about;
+  profileAvatar.style.backgroundImage = `url(${data.avatar})`;
+});
+
+getInitialCards().then((initialCards) => {
+  initialCards.forEach((card) => {
+    const newCard = createCard(
+      cardTemplate,
+      card,
+      removeCard,
+      openImageModal,
+      likeCard
+    );
+    cardsList.append(newCard);
+  });
 });
 
 // Enabling validations on all forms
