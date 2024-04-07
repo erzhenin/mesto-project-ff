@@ -103,9 +103,9 @@ const deleteCard = (cardId) => {
     });
 };
 
-const addLike = (cardId) => {
+const changeLike = (cardId, method) => {
   return fetch(config.baseUrl.concat("/", "cards/likes").concat("/", cardId), {
-    method: "PUT",
+    method: method,
     headers: {
       authorization: config.headers.authorization,
     },
@@ -120,25 +120,14 @@ const addLike = (cardId) => {
     .catch((err) => {
       return Promise.reject(`Не удалось выполнить запрос: ${err}`);
     });
+}
+
+const addLike = (cardId) => {
+  return changeLike(cardId, "PUT");
 };
 
 const removeLike = (cardId) => {
-  return fetch(config.baseUrl.concat("/", "cards/likes").concat("/", cardId), {
-    method: "DELETE",
-    headers: {
-      authorization: config.headers.authorization,
-    },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+  return changeLike(cardId, "DELETE");
 };
 
 const setAvatar = (avatar) => {

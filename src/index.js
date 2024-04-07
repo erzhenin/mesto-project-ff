@@ -106,7 +106,8 @@ const handlePlaceFormSubmit = (event) => {
         cardInfo,
         removeCard,
         openImageModal,
-        likeCard
+        likeCard,
+        false
       );
       cardsList.prepend(newCard);
 
@@ -158,20 +159,38 @@ popupCloseCollection.forEach((popup) => {
 
 // Retrieving initial information
 
-getUserInfo().then((data) => {
-  profileTitle.textContent = data.name;
-  profileDesc.textContent = data.about;
-  profileAvatar.style.backgroundImage = `url(${data.avatar})`;
-});
+const promises = [getUserInfo(), getInitialCards()];
 
-getInitialCards().then((initialCards) => {
-  initialCards.forEach((card) => {
+Promise.all(promises).then((data) => {
+  profileTitle.textContent = data[0].name;
+  profileDesc.textContent = data[0].about;
+  profileAvatar.style.backgroundImage = `url(${data[0].avatar})`;
+
+  const userId = data[0]._id;
+
+  data[1].forEach((card) => {
+    let remFunc = null;
+    let liked = false;
+
+    if (card.owner._id === userId) {
+      remFunc = removeCard;
+    }
+
+    if (
+      card.likes.some((user) => {
+        return user._id === userId;
+      })
+    ) {
+      liked = true;
+    }
+
     const newCard = createCard(
       cardTemplate,
       card,
-      removeCard,
+      remFunc,
       openImageModal,
-      likeCard
+      likeCard,
+      liked
     );
     cardsList.append(newCard);
   });

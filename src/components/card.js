@@ -1,9 +1,12 @@
+import { addLike, removeLike } from "./api";
+
 function createCard(
   cardTemplate,
   cardInfo,
   removeFunction,
   showFunction,
-  likeFunction
+  likeFunction,
+  isLiked
 ) {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -20,18 +23,41 @@ function createCard(
   cardTitle.textContent = cardInfo.name;
   cardLikeCounter.textContent = cardInfo.likes.length;
 
+  if (isLiked) {
+    cardLikeButton.classList.add("card__like-button_is-active");
+  }
+
   cardImage.addEventListener("click", () => showFunction(cardInfo));
-  cardDeleteButton.addEventListener("click", () => removeFunction(cardElement));
-  cardLikeButton.addEventListener("click", () => likeFunction(cardLikeButton));
+  cardLikeButton.addEventListener("click", () =>
+    likeFunction(cardLikeButton, cardLikeCounter, cardInfo)
+  );
+
+  if (removeFunction) {
+    cardDeleteButton.addEventListener("click", () =>
+      removeFunction(cardElement, cardInfo)
+    );
+  } else {
+    cardDeleteButton.classList.add("card__delete-button_inactive");
+  }
 
   return cardElement;
 }
 
-function likeCard(cardLikeButton) {
-  cardLikeButton.classList.toggle("card__like-button_is-active");
+function likeCard(cardLikeButton, cardLikeCounter, cardInfo) {
+  if (cardLikeButton.classList.contains("card__like-button_is-active")) {
+    removeLike(cardInfo._id).then((data) => {
+      cardLikeCounter.textContent = data.likes.length;
+      cardLikeButton.classList.remove("card__like-button_is-active");
+    });
+  } else {
+    addLike(cardInfo._id).then((data) => {
+      cardLikeCounter.textContent = data.likes.length;
+      cardLikeButton.classList.add("card__like-button_is-active");
+    });
+  }
 }
 
-function removeCard(cardElement) {
+function removeCard(cardElement, cardInfo) {
   cardElement.remove();
 }
 
