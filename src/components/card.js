@@ -1,4 +1,4 @@
-import { addLike, removeLike } from "./api";
+import { addLike, deleteCard, removeLike } from "./api";
 
 function createCard(
   cardTemplate,
@@ -58,7 +58,9 @@ function likeCard(cardLikeButton, cardLikeCounter, cardInfo) {
 }
 
 function removeCard(cardElement, cardInfo) {
-  cardElement.remove();
+  deleteCard(cardInfo._id).then(() => {
+    cardElement.remove();
+  });
 }
 
 export { createCard, likeCard, removeCard };
