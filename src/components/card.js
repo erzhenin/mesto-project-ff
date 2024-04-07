@@ -6,7 +6,7 @@ const createCard = (
   removeFunction,
   showFunction,
   likeFunction,
-  isLiked
+  userId
 ) => {
   const cardElement = cardTemplate
     .querySelector(".places__item")
@@ -25,7 +25,11 @@ const createCard = (
   cardTitle.textContent = cardInfo.name;
   cardLikeCounter.textContent = cardInfo.likes.length;
 
-  if (isLiked) {
+  if (
+    cardInfo.likes.some((user) => {
+      return user._id === userId;
+    })
+  ) {
     cardLikeButton.classList.add("card__like-button_is-active");
   }
 

@@ -264,18 +264,9 @@ Promise.all(promises)
 
     data[1].forEach((card) => {
       let remFunc = null;
-      let liked = false;
 
       if (card.owner._id === userId) {
         remFunc = openDeleteCardModal;
-      }
-
-      if (
-        card.likes.some((user) => {
-          return user._id === userId;
-        })
-      ) {
-        liked = true;
       }
 
       const newCard = createCard(
@@ -284,7 +275,7 @@ Promise.all(promises)
         remFunc,
         openImageModal,
         likeCard,
-        liked
+        userId
       );
       cardsList.append(newCard);
     });
