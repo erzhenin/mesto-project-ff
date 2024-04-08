@@ -116,7 +116,7 @@ const handlePlaceFormSubmit = (event) => {
           openDeleteCardModal,
           openImageModal,
           likeCard,
-          null
+          cardInfo.owner._id
         );
         cardsList.prepend(newCard);
 
@@ -156,10 +156,9 @@ const handleDeleteFormSubmit = (event) => {
   );
 
   const makeRequest = () => {
-    return removeCard(cardElement)
-      .then(() => {
-        closeModal(popupDeleteCard);
-      });
+    return removeCard(cardElement).then(() => {
+      closeModal(popupDeleteCard);
+    });
   };
 
   if (cardElement) {
@@ -221,16 +220,10 @@ Promise.all(promises)
     const userId = data[0]._id;
 
     data[1].forEach((card) => {
-      let remFunc = null;
-
-      if (card.owner._id === userId) {
-        remFunc = openDeleteCardModal;
-      }
-
       const newCard = createCard(
         cardTemplate,
         card,
-        remFunc,
+        openDeleteCardModal,
         openImageModal,
         likeCard,
         userId

@@ -38,7 +38,7 @@ const createCard = (
     likeFunction(cardLikeButton, cardLikeCounter, cardInfo)
   );
 
-  if (removeFunction) {
+  if (cardInfo.owner._id === userId) {
     cardDeleteButton.addEventListener("click", () => {
       removeFunction(cardInfo);
     });
@@ -72,10 +72,9 @@ const likeCard = (cardLikeButton, cardLikeCounter, cardInfo) => {
 };
 
 const removeCard = (cardElement) => {
-  return deleteCard(cardElement.dataset.id)
-    .then(() => {
-      cardElement.remove();
-    });
+  return deleteCard(cardElement.dataset.id).then(() => {
+    cardElement.remove();
+  });
 };
 
 export { createCard, likeCard, removeCard };
