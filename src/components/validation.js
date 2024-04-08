@@ -1,10 +1,10 @@
 const disableButton = (buttonElement, validationConfig) => {
-  buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
   buttonElement.setAttribute("disabled", true);
 };
 
 const enableButton = (buttonElement, validationConfig) => {
-  buttonElement.classList.add(validationConfig.inactiveButtonClass);
+  buttonElement.classList.remove(validationConfig.inactiveButtonClass);
   buttonElement.removeAttribute("disabled");
 };
 
@@ -57,9 +57,9 @@ const hasInvalidInput = (inputList) => {
 
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
   if (hasInvalidInput(inputList)) {
-    enableButton(buttonElement, validationConfig);
-  } else {
     disableButton(buttonElement, validationConfig);
+  } else {
+    enableButton(buttonElement, validationConfig);
   }
 };
 
@@ -79,6 +79,7 @@ const setEventListeners = (formElement, validationConfig) => {
 
   inputList.forEach((inputElement) => {
     inputElement.addEventListener("input", function () {
+      console.log("input");
       checkInputValidity(formElement, inputElement, validationConfig);
       toggleButtonState(inputList, buttonElement, validationConfig);
     });
@@ -110,6 +111,8 @@ const clearValidation = (formElement, validationConfig) => {
     inputElement.setCustomValidity("");
     hideInputError(formElement, inputElement, validationConfig);
   });
+
+  toggleButtonState(inputList, buttonElement, validationConfig);
 };
 
 export { enableValidation, clearValidation };

@@ -71,13 +71,10 @@ const likeCard = (cardLikeButton, cardLikeCounter, cardInfo) => {
   }
 };
 
-const removeCard = (cardElement, cardId) => {
-  return deleteCard(cardId)
+const removeCard = (cardElement) => {
+  return deleteCard(cardElement.dataset.id)
     .then(() => {
       cardElement.remove();
-    })
-    .catch((err) => {
-      console.log(`Ошибка: ${err}`);
     });
 };
 

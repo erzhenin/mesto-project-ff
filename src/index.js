@@ -10,6 +10,7 @@ import {
   setAvatar,
   setUserInfo,
 } from "./components/api";
+import { handleSubmit } from "./components/utils/utils";
 
 // Constant variables
 
@@ -68,16 +69,6 @@ const profileAvatar = document.querySelector(".profile__image");
 
 // Functions
 
-const showError = (errorElement, errorText) => {
-  errorElement.classList.add("popup__error_active");
-  errorElement.textContent = errorText;
-};
-
-const hideError = (errorElement) => {
-  errorElement.classList.remove("popup__error_active");
-  errorElement.textContent = "";
-};
-
 const openImageModal = (cardInfo) => {
   const source = cardInfo.link;
   const alternative = cardInfo.name;
@@ -95,116 +86,87 @@ const openDeleteCardModal = (cardInfo) => {
 
   clearValidation(deleteCardForm, validationConfig);
 
-  deleteCardFormButton.addEventListener("click", handleDeleteFormSubmit);
-
   openModal(popupDeleteCard);
 };
 
-const handleProfileFormSubmit = (event) => {
-  event.preventDefault();
+function handleProfileFormSubmit(event) {
+  // создаем функцию, которая возвращает промис, так как любой запрос возвращает его
+  function makeRequest() {
+    // return позволяет потом дальше продолжать цепочку `then, catch, finally`
+    return setUserInfo(profileFormName.value, profileFormDesc.value).then(
+      (userData) => {
+        profileTitle.textContent = userData.name;
+        profileDesc.textContent = userData.about;
 
-  profileFormButton.textContent = profileFormButton.dataset.loading;
-
-  setUserInfo(profileFormName.value, profileFormDesc.value)
-    .then((data) => {
-      profileTitle.textContent = data.name;
-      profileDesc.textContent = data.about;
-
-      closeModal(popupProfileEdit);
-    })
-    .catch((err) => {
-      showError(profileFormError, `Ошибка: ${err}`);
-    })
-    .finally(() => {
-      profileFormButton.textContent = profileFormButton.dataset.text;
-    });
-};
+        closeModal(popupProfileEdit);
+      }
+    );
+  }
+  // вызываем универсальную функцию, передавая в нее запрос, событие и текст изменения кнопки (если нужен другой, а не `"Сохранение..."`)
+  handleSubmit(makeRequest, event);
+}
 
 const handlePlaceFormSubmit = (event) => {
-  event.preventDefault();
+  const makeRequest = () => {
+    return addCard(placeFormName.value, placeFormLink.value).then(
+      (cardInfo) => {
+        const newCard = createCard(
+          cardTemplate,
+          cardInfo,
+          openDeleteCardModal,
+          openImageModal,
+          likeCard,
+          null
+        );
+        cardsList.prepend(newCard);
 
-  placeFormButton.textContent = placeFormButton.dataset.loading;
+        closeModal(popupNewCard);
+      }
+    );
+  };
 
-  addCard(placeFormName.value, placeFormLink.value)
-    .then((cardInfo) => {
-      const newCard = createCard(
-        cardTemplate,
-        cardInfo,
-        openDeleteCardModal,
-        openImageModal,
-        likeCard,
-        null
-      );
-      cardsList.prepend(newCard);
-
-      placeForm.reset();
-
-      closeModal(popupNewCard);
-    })
-    .catch((err) => {
-      showError(placeFromError, `Ошибка: ${err}`);
-    })
-    .finally(() => {
-      placeFormButton.textContent = placeFormButton.dataset.text;
-    });
+  handleSubmit(makeRequest, event);
 };
 
 const handleAvatarFormSubmit = (event) => {
-  event.preventDefault();
+  const makeRequest = () => {
+    return setAvatar(avatarFormLink.value).then((data) => {
+      profileAvatar.style.backgroundImage = `url(${data.avatar})`;
 
-  avatarFormButton.textContent = avatarFormButton.dataset.loading;
+      closeModal(popupAvatar);
+    });
+  };
 
   isImage(avatarFormLink.value)
-    .then((result) => {
-      if (result) {
-        setAvatar(avatarFormLink.value)
-          .then((data) => {
-            profileAvatar.style.backgroundImage = `url(${data.avatar})`;
-            avatarForm.reset();
-
-            closeModal(popupAvatar);
-          })
-          .catch((err) => {
-            showError(avatarFormError, `Ошибка: ${err}`);
-          });
+    .then((checkResult) => {
+      if (checkResult) {
+        handleSubmit(makeRequest, event);
       } else {
-        showError(avatarFormError, "Ссылка не является изображением!");
+        console.log("Ссылка не является изображением!");
       }
     })
     .catch((err) => {
-      showError(avatarFormError, `Ошибка: ${err}`);
-    })
-    .finally(() => {
-      avatarFormButton.textContent = avatarFormButton.dataset.text;
+      console.log(`Ошибка: ${err}`);
     });
 };
 
 const handleDeleteFormSubmit = (event) => {
-  event.preventDefault();
-
   const cardElement = document.querySelector(
     `[data-id="${deleteCardFormId.value}"]`
   );
 
-  if (cardElement) {
-    deleteCardFormButton.textContent = deleteCardFormButton.dataset.loading;
-
-    removeCard(cardElement, deleteCardFormId.value)
-      .then((res) => {
-        deleteCardForm.reset();
+  const makeRequest = () => {
+    return removeCard(cardElement)
+      .then(() => {
         closeModal(popupDeleteCard);
-      })
-      .catch((err) => {
-        showError(deleteCardFormError, `Ошибка: ${err}`);
-      })
-      .finally(() => {
-        deleteCardFormButton.textContent = deleteCardFormButton.dataset.text;
       });
-  } else {
-    showError(deleteCardFormError, "Ошибка: Указанная карточка не найдена!");
-  }
+  };
 
-  event.target.removeEventListener("click", handleDeleteFormSubmit);
+  if (cardElement) {
+    handleSubmit(makeRequest, event, "Удаление...");
+  } else {
+    console.log("Ошибка: Указанная карточка не найдена!");
+  }
 };
 
 // Handlers
@@ -212,8 +174,6 @@ const handleDeleteFormSubmit = (event) => {
 buttonProfileEdit.addEventListener("click", () => {
   profileFormName.value = profileTitle.textContent;
   profileFormDesc.value = profileDesc.textContent;
-
-  hideError(profileFormError);
 
   clearValidation(profileForm, validationConfig);
 
@@ -223,8 +183,6 @@ buttonProfileEdit.addEventListener("click", () => {
 buttonNewCard.addEventListener("click", () => {
   placeForm.reset();
 
-  hideError(placeFromError);
-
   clearValidation(placeForm, validationConfig);
 
   openModal(popupNewCard);
@@ -232,8 +190,6 @@ buttonNewCard.addEventListener("click", () => {
 
 buttonChangeAvatar.addEventListener("click", () => {
   avatarForm.reset();
-
-  hideError(avatarFormError);
 
   clearValidation(avatarForm, validationConfig);
 
@@ -245,6 +201,8 @@ profileForm.addEventListener("submit", handleProfileFormSubmit);
 placeForm.addEventListener("submit", handlePlaceFormSubmit);
 
 avatarForm.addEventListener("submit", handleAvatarFormSubmit);
+
+deleteCardForm.addEventListener("submit", handleDeleteFormSubmit);
 
 popupCloseCollection.forEach((popup) => {
   popup.addEventListener("click", closeModalClick);

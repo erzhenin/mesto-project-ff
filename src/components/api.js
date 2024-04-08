@@ -1,24 +1,5 @@
-const apiConfig = {
-  baseUrl: "https://nomoreparties.co/v1/wff-cohort-10",
-  headers: {
-    authorization: "4988e7fc-55bd-42c1-ae9f-ec575699ec2a",
-    "Content-Type": "application/json",
-  },
-};
-
-const checkResponse = (res) => {
-  if (res.ok) {
-    return res.json();
-  }
-
-  return Promise.reject(`Ошибка: ${res.status}`);
-};
-
-const request = (endpoint, options) => {
-  return fetch(apiConfig.baseUrl.concat("/", endpoint), options).then(
-    checkResponse
-  );
-};
+import { apiConfig } from "./utils/constants";
+import { request } from "./utils/utils";
 
 const getUserInfo = () => {
   return request("users/me", {
