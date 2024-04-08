@@ -1,13 +1,15 @@
 import { addLike, deleteCard, removeLike } from "./api";
 
 const createCard = (
-  cardTemplate,
   cardInfo,
-  removeFunction,
-  showFunction,
-  likeFunction,
-  userId
+  userId,
+  cardParameters
 ) => {
+  const cardTemplate = cardParameters.cardTemplate;
+  const showFunction = cardParameters.showFunction;
+  const removeFunction = cardParameters.removeFunction;
+  const likeFunction = cardParameters.likeFunction;
+
   const cardElement = cardTemplate
     .querySelector(".places__item")
     .cloneNode(true);

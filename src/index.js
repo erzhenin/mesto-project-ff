@@ -44,24 +44,12 @@ const buttonChangeAvatar = document.querySelector(".profile__avatar-button");
 const profileForm = document.forms["edit-profile"];
 const profileFormName = profileForm.elements["name"];
 const profileFormDesc = profileForm.elements["description"];
-const profileFormButton = profileForm.elements["button"];
-const profileFormError = popupProfileEdit.querySelector(".popup__error");
-
-const placeForm = document.forms["new-place"];
-const placeFormName = placeForm.elements["place-name"];
-const placeFormLink = placeForm.elements["link"];
-const placeFormButton = placeForm.elements["button"];
-const placeFromError = popupNewCard.querySelector(".popup__error");
 
 const avatarForm = document.forms["change-avatar"];
 const avatarFormLink = avatarForm.elements["avatar"];
-const avatarFormButton = avatarForm.elements["button"];
-const avatarFormError = popupAvatar.querySelector(".popup__error");
 
 const deleteCardForm = document.forms["delete-card"];
 const deleteCardFormId = deleteCardForm.elements["cardid"];
-const deleteCardFormButton = deleteCardForm.elements["button"];
-const deleteCardFormError = popupDeleteCard.querySelector(".popup__error");
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDesc = document.querySelector(".profile__description");
@@ -89,6 +77,13 @@ const openDeleteCardModal = (cardInfo) => {
   openModal(popupDeleteCard);
 };
 
+const cardParameters = {
+  cardTemplate: cardTemplate,
+  removeFunction: openDeleteCardModal,
+  showFunction: openImageModal,
+  likeFunction: likeCard,
+};
+
 function handleProfileFormSubmit(event) {
   // создаем функцию, которая возвращает промис, так как любой запрос возвращает его
   function makeRequest() {
@@ -111,12 +106,9 @@ const handlePlaceFormSubmit = (event) => {
     return addCard(placeFormName.value, placeFormLink.value).then(
       (cardInfo) => {
         const newCard = createCard(
-          cardTemplate,
           cardInfo,
-          openDeleteCardModal,
-          openImageModal,
-          likeCard,
-          cardInfo.owner._id
+          cardInfo.owner._id,
+          cardParameters
         );
         cardsList.prepend(newCard);
 
@@ -220,14 +212,7 @@ Promise.all(promises)
     const userId = data[0]._id;
 
     data[1].forEach((card) => {
-      const newCard = createCard(
-        cardTemplate,
-        card,
-        openDeleteCardModal,
-        openImageModal,
-        likeCard,
-        userId
-      );
+      const newCard = createCard(card, userId, cardParameters);
       cardsList.append(newCard);
     });
   })
