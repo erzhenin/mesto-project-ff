@@ -1,5 +1,7 @@
 // Constant variables
 
+import { getInitialCards, getUserInfo } from "../api";
+
 export const apiConfig = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-10",
   headers: {
@@ -7,6 +9,8 @@ export const apiConfig = {
     "Content-Type": "application/json",
   },
 };
+
+// Constant variables
 
 export const validationConfig = {
   formSelector: ".popup__form",
@@ -38,25 +42,19 @@ export const buttonChangeAvatar = document.querySelector(".profile__avatar-butto
 export const profileForm = document.forms["edit-profile"];
 export const profileFormName = profileForm.elements["name"];
 export const profileFormDesc = profileForm.elements["description"];
-export const profileFormButton = profileForm.elements["button"];
-export const profileFormError = popupProfileEdit.querySelector(".popup__error");
 
 export const placeForm = document.forms["new-place"];
 export const placeFormName = placeForm.elements["place-name"];
 export const placeFormLink = placeForm.elements["link"];
-export const placeFormButton = placeForm.elements["button"];
-export const placeFromError = popupNewCard.querySelector(".popup__error");
 
 export const avatarForm = document.forms["change-avatar"];
 export const avatarFormLink = avatarForm.elements["avatar"];
-export const avatarFormButton = avatarForm.elements["button"];
-export const avatarFormError = popupAvatar.querySelector(".popup__error");
 
 export const deleteCardForm = document.forms["delete-card"];
 export const deleteCardFormId = deleteCardForm.elements["cardid"];
-export const deleteCardFormButton = deleteCardForm.elements["button"];
-export const deleteCardFormError = popupDeleteCard.querySelector(".popup__error");
 
 export const profileTitle = document.querySelector(".profile__title");
 export const profileDesc = document.querySelector(".profile__description");
 export const profileAvatar = document.querySelector(".profile__image");
+
+export const promises = [getUserInfo(), getInitialCards()];
