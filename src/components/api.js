@@ -1,7 +1,7 @@
 import { apiConfig } from "./utils/constants";
 import { request } from "./utils/utils";
 
-const getUserInfo = () => {
+export const getUserInfo = () => {
   return request("users/me", {
     headers: {
       authorization: apiConfig.headers.authorization,
@@ -9,7 +9,7 @@ const getUserInfo = () => {
   });
 };
 
-const setUserInfo = (name, about) => {
+export const setUserInfo = (name, about) => {
   return request("users/me", {
     method: "PATCH",
     headers: apiConfig.headers,
@@ -86,8 +86,6 @@ const isImage = (link) => {
 };
 
 export {
-  getUserInfo,
-  setUserInfo,
   getInitialCards,
   addCard,
   deleteCard,

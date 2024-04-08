@@ -1,7 +1,5 @@
 // Constant variables
 
-import { getInitialCards, getUserInfo } from "../api";
-
 export const apiConfig = {
   baseUrl: "https://nomoreparties.co/v1/wff-cohort-10",
   headers: {
@@ -64,5 +62,3 @@ export const deleteCardFormId = deleteCardForm.elements["cardid"];
 export const profileTitle = document.querySelector(".profile__title");
 export const profileDesc = document.querySelector(".profile__description");
 export const profileAvatar = document.querySelector(".profile__image");
-
-export const promises = [getUserInfo(), getInitialCards()];

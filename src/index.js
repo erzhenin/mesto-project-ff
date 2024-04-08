@@ -2,7 +2,7 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./components/card";
 import { openModal, closeModal, closeModalClick } from "./components/modal";
 import { enableValidation, clearValidation } from "./components/validation";
-import { addCard, setAvatar, setUserInfo } from "./components/api";
+import { addCard, getInitialCards, getUserInfo, setAvatar, setUserInfo } from "./components/api";
 import { handleSubmit, imageSubmit } from "./components/utils/utils";
 import * as con from "./components/utils/constants";
 
@@ -138,7 +138,7 @@ con.popupCloseCollection.forEach((popup) => {
 
 // Retrieving initial information
 
-Promise.all(con.promises)
+Promise.all([getUserInfo(), getInitialCards()])
   .then(([userData, cards]) => {
     con.profileTitle.textContent = userData.name;
     con.profileDesc.textContent = userData.about;
