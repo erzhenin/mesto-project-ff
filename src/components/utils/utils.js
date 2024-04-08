@@ -3,11 +3,16 @@ import { apiConfig } from "./constants";
 
 // Submit functions
 
-export function renderLoading(isLoading, button, buttonText='Сохранить', loadingText='Сохранение...') {
+export function renderLoading(
+  isLoading,
+  button,
+  buttonText = "Сохранить",
+  loadingText = "Сохранение..."
+) {
   if (isLoading) {
-    button.textContent = loadingText
+    button.textContent = loadingText;
   } else {
-    button.textContent = buttonText
+    button.textContent = buttonText;
   }
 }
 
@@ -31,18 +36,18 @@ export function handleSubmit(request, evt, loadingText = "Сохранение..
 }
 
 export function imageSubmit(link, request, event) {
-  isImage(link).then((checkResult) => {
-    if (checkResult) {
-      handleSubmit(request, event);
-    } else {
-      console.log("Ссылка не является изображением!");
-    }
-  })
-  .catch((error) => {
-    console.log(`Ошибка: ${error}`);
-  });
+  isImage(link)
+    .then((checkResult) => {
+      if (checkResult) {
+        handleSubmit(request, event);
+      } else {
+        console.log("Ссылка не является изображением!");
+      }
+    })
+    .catch((error) => {
+      console.log(`Ошибка: ${error}`);
+    });
 }
-
 
 // API functions
 

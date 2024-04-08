@@ -1,10 +1,6 @@
 import { addLike, deleteCard, removeLike } from "./api";
 
-const createCard = (
-  cardInfo,
-  userId,
-  cardParameters
-) => {
+const createCard = (cardInfo, userId, cardParameters) => {
   const cardTemplate = cardParameters.cardTemplate;
   const showFunction = cardParameters.showFunction;
   const removeFunction = cardParameters.removeFunction;

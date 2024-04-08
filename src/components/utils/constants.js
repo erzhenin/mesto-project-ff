@@ -27,17 +27,25 @@ export const cardsList = document.querySelector(".places__list");
 export const popupProfileEdit = document.querySelector(".popup_type_edit");
 export const popupNewCard = document.querySelector(".popup_type_new-card");
 export const popupAvatar = document.querySelector(".popup_type_change-avatar");
-export const popupDeleteCard = document.querySelector(".popup_type_delete-card");
+export const popupDeleteCard = document.querySelector(
+  ".popup_type_delete-card"
+);
 
 export const popupImage = document.querySelector(".popup_type_image");
 export const image = popupImage.querySelector(".popup__image");
 export const caption = popupImage.querySelector(".popup__caption");
 
-export const popupCloseCollection = document.querySelectorAll(".popup, .popup__close");
+export const popupCloseCollection = document.querySelectorAll(
+  ".popup, .popup__close"
+);
 
-export const buttonProfileEdit = document.querySelector(".profile__edit-button");
+export const buttonProfileEdit = document.querySelector(
+  ".profile__edit-button"
+);
 export const buttonNewCard = document.querySelector(".profile__add-button");
-export const buttonChangeAvatar = document.querySelector(".profile__avatar-button");
+export const buttonChangeAvatar = document.querySelector(
+  ".profile__avatar-button"
+);
 
 export const profileForm = document.forms["edit-profile"];
 export const profileFormName = profileForm.elements["name"];
