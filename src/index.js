@@ -6,11 +6,10 @@ import {
   addCard,
   getInitialCards,
   getUserInfo,
-  isImage,
   setAvatar,
   setUserInfo,
 } from "./components/api";
-import { handleSubmit } from "./components/utils/utils";
+import { handleSubmit, imageSubmit } from "./components/utils/utils";
 
 // Constant variables
 
@@ -45,6 +44,10 @@ const profileForm = document.forms["edit-profile"];
 const profileFormName = profileForm.elements["name"];
 const profileFormDesc = profileForm.elements["description"];
 
+const placeForm = document.forms["new-place"];
+const placeFormName = placeForm.elements["place-name"];
+const placeFormLink = placeForm.elements["link"];
+
 const avatarForm = document.forms["change-avatar"];
 const avatarFormLink = avatarForm.elements["avatar"];
 
@@ -56,6 +59,8 @@ const profileDesc = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
 
 // Functions
+
+
 
 const openImageModal = (cardInfo) => {
   const source = cardInfo.link;
@@ -84,10 +89,16 @@ const cardParameters = {
   likeFunction: likeCard,
 };
 
+function renderCard(cardInfo, userId, method = "prepend") {
+  const cardElement = createCard(cardInfo, userId, cardParameters);
+
+  cardsList[ method ](cardElement);
+}
+
+
+
 function handleProfileFormSubmit(event) {
-  // создаем функцию, которая возвращает промис, так как любой запрос возвращает его
   function makeRequest() {
-    // return позволяет потом дальше продолжать цепочку `then, catch, finally`
     return setUserInfo(profileFormName.value, profileFormDesc.value).then(
       (userData) => {
         profileTitle.textContent = userData.name;
@@ -97,7 +108,7 @@ function handleProfileFormSubmit(event) {
       }
     );
   }
-  // вызываем универсальную функцию, передавая в нее запрос, событие и текст изменения кнопки (если нужен другой, а не `"Сохранение..."`)
+
   handleSubmit(makeRequest, event);
 }
 
@@ -105,19 +116,14 @@ const handlePlaceFormSubmit = (event) => {
   const makeRequest = () => {
     return addCard(placeFormName.value, placeFormLink.value).then(
       (cardInfo) => {
-        const newCard = createCard(
-          cardInfo,
-          cardInfo.owner._id,
-          cardParameters
-        );
-        cardsList.prepend(newCard);
+        renderCard(cardInfo, cardInfo.owner._id);
 
         closeModal(popupNewCard);
       }
     );
   };
 
-  handleSubmit(makeRequest, event);
+  imageSubmit(placeFormLink.value, makeRequest, event);
 };
 
 const handleAvatarFormSubmit = (event) => {
@@ -129,17 +135,7 @@ const handleAvatarFormSubmit = (event) => {
     });
   };
 
-  isImage(avatarFormLink.value)
-    .then((checkResult) => {
-      if (checkResult) {
-        handleSubmit(makeRequest, event);
-      } else {
-        console.log("Ссылка не является изображением!");
-      }
-    })
-    .catch((err) => {
-      console.log(`Ошибка: ${err}`);
-    });
+  imageSubmit(avatarFormLink.value, makeRequest, event);
 };
 
 const handleDeleteFormSubmit = (event) => {
@@ -204,20 +200,19 @@ popupCloseCollection.forEach((popup) => {
 const promises = [getUserInfo(), getInitialCards()];
 
 Promise.all(promises)
-  .then((data) => {
-    profileTitle.textContent = data[0].name;
-    profileDesc.textContent = data[0].about;
-    profileAvatar.style.backgroundImage = `url(${data[0].avatar})`;
+  .then(([userData, cards]) => {
+    profileTitle.textContent = userData.name;
+    profileDesc.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
 
-    const userId = data[0]._id;
+    const userId = userData._id;
 
-    data[1].forEach((card) => {
-      const newCard = createCard(card, userId, cardParameters);
-      cardsList.append(newCard);
+    cards.forEach((cardInfo) => {
+      renderCard(cardInfo, userId, "append");
     });
   })
-  .catch((err) => {
-    console.log(`Ошибка: ${err}`);
+  .catch((error) => {
+    console.log(`Ошибка: ${error}`);
   });
 
 // Enabling validations on all forms

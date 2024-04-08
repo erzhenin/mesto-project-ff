@@ -1,3 +1,4 @@
+import { isImage } from "../api";
 import { apiConfig } from "./constants";
 
 // Submit functions
@@ -28,6 +29,20 @@ export function handleSubmit(request, evt, loadingText = "Сохранение..
       renderLoading(false, submitButton, initialText);
     });
 }
+
+export function imageSubmit(link, request, event) {
+  isImage(link).then((checkResult) => {
+    if (checkResult) {
+      handleSubmit(request, event);
+    } else {
+      console.log("Ссылка не является изображением!");
+    }
+  })
+  .catch((error) => {
+    console.log(`Ошибка: ${error}`);
+  });
+}
+
 
 // API functions
 
