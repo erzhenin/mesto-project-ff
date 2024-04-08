@@ -11,17 +11,13 @@ const getUserInfo = () => {
     headers: {
       authorization: config.headers.authorization,
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const setUserInfo = (name, about) => {
@@ -32,17 +28,13 @@ const setUserInfo = (name, about) => {
       name,
       about,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const getInitialCards = () => {
@@ -50,17 +42,13 @@ const getInitialCards = () => {
     headers: {
       authorization: config.headers.authorization,
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const addCard = (name, link) => {
@@ -71,17 +59,13 @@ const addCard = (name, link) => {
       name,
       link,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const deleteCard = (cardId) => {
@@ -90,17 +74,13 @@ const deleteCard = (cardId) => {
     headers: {
       authorization: config.headers.authorization,
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const changeLike = (cardId, method) => {
@@ -109,17 +89,13 @@ const changeLike = (cardId, method) => {
     headers: {
       authorization: config.headers.authorization,
     },
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const addLike = (cardId) => {
@@ -137,33 +113,23 @@ const setAvatar = (avatar) => {
     body: JSON.stringify({
       avatar,
     }),
-  })
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
-    })
-    .catch((err) => {
-      return Promise.reject(`Не удалось выполнить запрос: ${err}`);
-    });
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
 };
 
 const isImage = (link) => {
-  return fetch(link, {})
-    .then((res) => {
-      if (res.ok) {
-        return Promise.resolve(
-          res.headers.get("content-type").includes("image")
-        );
-      }
+  return fetch(link, {}).then((res) => {
+    if (res.ok) {
+      return Promise.resolve(res.headers.get("content-type").includes("image"));
+    }
 
-      return Promise.reject(res.status);
-    })
-    .catch((err) => {
-      return Promise.reject(err);
-    });
+    return Promise.reject(res.status);
+  });
 };
 
 export {
